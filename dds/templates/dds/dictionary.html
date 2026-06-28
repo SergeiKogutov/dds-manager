@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Справочники — ДДС Manager{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Управление справочниками</h1>
+
+<div class="row g-4">
+    <!-- Статусы -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">Статусы</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="row g-2 mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    <input type="hidden" name="entity" value="status">
+                    <div class="col-8">
+                        <input type="text" name="name" class="form-control" placeholder="Новый статус" required>
+                    </div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary w-100">Добавить</button>
+                    </div>
+                </form>
+                <ul class="list-group list-group-flush">
+                    {% for item in statuses %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <form method="post" class="d-flex gap-2 flex-grow-1 me-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="entity" value="status">
+                            <input type="hidden" name="pk" value="{{ item.pk }}">
+                            <input type="text" name="name" value="{{ item.name }}" class="form-control form-control-sm" required>
+                            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-check"></i></button>
+                        </form>
+                        <form method="post" onsubmit="return confirm('Удалить «{{ item.name }}»?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="entity" value="status">
+                            <input type="hidden" name="pk" value="{{ item.pk }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted px-0">Статусы не добавлены</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Типы -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <h2 class="h6 mb-0">Типы</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="row g-2 mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    <input type="hidden" name="entity" value="transaction_type">
+                    <div class="col-8">
+                        <input type="text" name="name" class="form-control" placeholder="Новый тип" required>
+                    </div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary w-100">Добавить</button>
+                    </div>
+                </form>
+                <ul class="list-group list-group-flush">
+                    {% for item in transaction_types %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <form method="post" class="d-flex gap-2 flex-grow-1 me-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="entity" value="transaction_type">
+                            <input type="hidden" name="pk" value="{{ item.pk }}">
+                            <input type="text" name="name" value="{{ item.name }}" class="form-control form-control-sm" required>
+                            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-check"></i></button>
+                        </form>
+                        <form method="post" onsubmit="return confirm('Удалить «{{ item.name }}»?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="entity" value="transaction_type">
+                            <input type="hidden" name="pk" value="{{ item.pk }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted px-0">Типы не добавлены</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Категории -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <h2 class="h6 mb-0">Категории <small class="text-muted">(привязаны к типу)</small></h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="row g-2 mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    <input type="hidden" name="entity" value="category">
+                    <div class="col-5">
+                        <input type="text" name="name" class="form-control" placeholder="Название" required>
+                    </div>
+                    <div class="col-4">
+                        <select name="transaction_type" class="form-select" required>
+                            <option value="">Тип...</option>
+                            {% for t in transaction_types %}
+                            <option value="{{ t.pk }}">{{ t.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-primary w-100">Добавить</button>
+                    </div>
+                </form>
+                <ul class="list-group list-group-flush">
+                    {% for item in categories %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <form method="post" class="row g-2 flex-grow-1 me-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="entity" value="category">
+                            <input type="hidden" name="pk" value="{{ item.pk }}">
+                            <div class="col-5">
+                                <input type="text" name="name" value="{{ item.name }}" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="col-5">
+                                <select name="transaction_type" class="form-select form-select-sm" required>
+                                    {% for t in transaction_types %}
+                                    <option value="{{ t.pk }}" {% if t.pk == item.transaction_type_id %}selected{% endif %}>{{ t.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <button type="submit" class="btn btn-sm btn-outline-primary w-100"><i class="bi bi-check"></i></button>
+                            </div>
+                        </form>
+                        <form method="post" onsubmit="return confirm('Удалить «{{ item.name }}»?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="entity" value="category">
+                            <input type="hidden" name="pk" value="{{ item.pk }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted px-0">Категории не добавлены</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подкатегории -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <h2 class="h6 mb-0">Подкатегории <small class="text-muted">(привязаны к категории)</small></h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="row g-2 mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    <input type="hidden" name="entity" value="subcategory">
+                    <div class="col-5">
+                        <input type="text" name="name" class="form-control" placeholder="Название" required>
+                    </div>
+                    <div class="col-4">
+                        <select name="category" class="form-select" required>
+                            <option value="">Категория...</option>
+                            {% for c in categories %}
+                            <option value="{{ c.pk }}">{{ c.name }} ({{ c.transaction_type }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-primary w-100">Добавить</button>
+                    </div>
+                </form>
+                <ul class="list-group list-group-flush">
+                    {% for item in subcategories %}
+                    <li class="list-group-item px-0">
+                        <div class="d-flex gap-2 align-items-center">
+                            <form method="post" class="row g-2 flex-grow-1">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="entity" value="subcategory">
+                                <input type="hidden" name="pk" value="{{ item.pk }}">
+                                <div class="col-4">
+                                    <input type="text" name="name" value="{{ item.name }}" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-5">
+                                    <select name="category" class="form-select form-select-sm" required>
+                                        {% for c in categories %}
+                                        <option value="{{ c.pk }}" {% if c.pk == item.category_id %}selected{% endif %}>
+                                            {{ c.name }} ({{ c.transaction_type }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary w-100">
+                                        <i class="bi bi-check"></i> Сохранить
+                                    </button>
+                                </div>
+                            </form>
+                            <form method="post" onsubmit="return confirm('Удалить «{{ item.name }}»?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="entity" value="subcategory">
+                                <input type="hidden" name="pk" value="{{ item.pk }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted px-0">Подкатегории не добавлены</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
